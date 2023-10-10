@@ -20,7 +20,7 @@ class Textile2md2
     #   result = "\n  \n" + m1 + ' ' + m2
     #   result
     # end
-
+    pan.gsub!(/<pre><code class="\w+">/,'<pre><code>')  # pandoc が応答なくなるので削除    
     pan.gsub!(/^ *((?:\*#|\*\*#|#\*|##\*)[*#]*) +(.+)$/) do |m|
       m1 = $1
       m2 = $2
@@ -28,8 +28,8 @@ class Textile2md2
       indent = '    ' * count
       val = m1[count-1] == "#" ? "1." : "-"
       result = indent + val + ' ' + m2
-      puts "#:" + m
-      puts ">:" + result
+      # puts "#:" + m
+      # puts ">:" + result
       result
     end
     
@@ -150,6 +150,8 @@ class Textile2md2
       rec.with_lock do
         if rec[attrbute]
           pan = rec[attrbute]
+          puts "################ START ###################\n"
+          puts "#{pan.slice(0,pan.index("\n")||0)}"
           # if pan =~ / ＯＳＫ宛完了確認書作成/
           #   puts pan
           #   exit
@@ -165,6 +167,7 @@ class Textile2md2
           #   rec.save!
           # end
         end
+        puts "################ END   ###################\n"
       end
     end
   end
