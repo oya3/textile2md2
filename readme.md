@@ -2,6 +2,26 @@ redmine の textile 形式 を markdown 形式にそれっぽく変換する
 以下、手順
 
 ``` bash
+# 変換に大量にメモリが必要なので2GBしかない場合とかはスワップ設定を実施しておくこと
+#  - kagoya の kvm ubuntu20.04 はスワップファイルが初期状態で設定されてある様子
+# 一時的にスワップさせる場合
+$ dd if=/dev/zero of=/tmp/swap.img bs=1M count=1024
+$ chmod 600 /tmp/swap.img
+$ mkswap /tmp/swap.img
+$ sudo swapon /tmp/swap.img
+
+# 永続させる場合
+$ dd if=/dev/zero of=/swapfile bs=1M count=1024
+$ chmod 600 /swapfile
+$ mkswap /swapfile
+$ sudo swapon /swapfile
+$ echo "/swapfile none swap sw 0 0" | sudo tee -a /etc/fstab
+$ reboot
+# スワップ確認
+$ swapon --show
+NAME      TYPE  SIZE USED PRIO
+/swapfile file 1024M   0B   -2
+
 # redmine gemfile に padoc 追加
 $ sudo apt install pandoc
 # textile2md2.rake を  lib/tasks/textile2md2.rake に配置しておく
@@ -12,7 +32,7 @@ gem 'pandoc-ruby'
 $ bundle i
 
 # 旧DBを削除(dbuser:redmine, dbname:redmine50を対象にする）
-$ mysql -u root -p
+$ sudo mysql -u root -p
 # DB 確認
 MariaDB [(none)]> show databases;
 
